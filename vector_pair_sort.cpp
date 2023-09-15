@@ -27,7 +27,7 @@ int main () {
     }
 
     sort(v.begin(), v.end(), cmp); // ascending order for v[i].first and descending order for v[i].second
-    sort(v.begin(), v.end(), mycompare);// ascending order for v[i].first and ascending order for v[i].second
+    sort(v.begin(), v.end(), mycompare);// descending order for v[i].first and ascending order for v[i].second
 
     for (int i=0; i<v.size(); i++) {
         cout << v[i].first<<" "<<v[i].second<<endl;

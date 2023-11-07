@@ -1,0 +1,268 @@
+***************************************************Interface (Authenticatable)******************************************
+
+package com.mycompany.main;
+
+interface Authenticatable {
+    boolean authenticate(String password);
+}
+
+******************************************************Account Class*******************************************************
+
+package com.mycompany.main;
+
+public class Account {
+    String name;
+    String acc_type;
+    int Acc_num;
+    int Acc_Balance;
+
+    Account(String name, String acc_type, int Acc_num, int Acc_Balance) {
+        this.name = name;
+        this.acc_type = acc_type;
+        this.Acc_num = Acc_num;
+        this.Acc_Balance = Acc_Balance;
+    }
+}
+
+********************************************************Create-Account Class*******************************************************
+package com.mycompany.main;
+
+class create_account extends Account implements Authenticatable {
+    private final String password;
+    private String street;
+    private String city;
+
+    create_account(String name, String a_t, String password, String street, String city, int initialBalance) {
+        super(name, a_t, generateAccountNumber(), initialBalance);
+        
+        this.password = password;
+        this.street = street;
+        this.city = city;
+    }
+
+    void display_details() {
+        System.out.println("Depositor Name: " + name);
+        System.out.println("Account Number: " + Acc_num);
+        System.out.println("Account Balance: " + Acc_Balance);
+        System.out.println("Account Type: " + acc_type);
+        System.out.println("Street: " + street);
+        System.out.println("City: " + city);
+    }
+
+    void deposite(int money) {
+        Acc_Balance += money;
+    }
+
+    int withdraw(int withdraw) {
+        if (withdraw > Acc_Balance || (Acc_Balance-withdraw) < 1000) {
+            System.out.println("\t\t\t\t\t\t\"INSUFFICIENT BALANCE. WITHDRAWAL CANCELED\"");
+        }
+        else if (withdraw <= Acc_Balance) {
+            Acc_Balance -= withdraw;
+        } 
+        return Acc_Balance;
+    }
+
+    public boolean authenticate(String inputPassword) {
+        return this.password.equals(inputPassword);
+    }
+
+    // Generate a unique account number
+    private static int generateAccountNumber() {
+        return (int) ((Math.random() * 9000) + 1000);
+    }
+}
+
+****************************************************************Main Class**************************************************************************************
+
+package com.mycompany.main;
+
+import java.util.Scanner;
+import java.util.List;
+import java.util.ArrayList;
+
+public class Main {
+    public static void main(String[] args) {
+        List<create_account> accounts = new ArrayList<>();
+        
+        Scanner in = new Scanner(System.in);
+        Scanner strng = new Scanner(System.in);
+        int Choice;
+        boolean Exit = true;
+        
+        displayWelcomeMessage();
+
+        do {
+            System.out.println("Choose Our Services : ");
+            System.out.println("1. Create Account");
+            System.out.println("2. Deposit money");
+            System.out.println("3. Withdraw money");
+            System.out.println("4. Check balance");
+            System.out.println("5. Display Account Details");
+            System.out.println("6. to quit: \n");
+            System.out.print("Enter Your Choice: ");
+            Choice = in.nextInt();
+
+            switch (Choice) {
+                case 1 : {
+                    System.out.print("\nEnter your Name: ");
+                    String user_name = strng.nextLine();
+                    System.out.print("Enter Account Type: ");
+                    String type = strng.nextLine();
+                    System.out.print("Enter Password: ");
+                    String password = strng.nextLine();
+                    System.out.print("Enter Street: ");
+                    String street = strng.nextLine();
+                    System.out.print("Enter City: ");
+                    String city = strng.nextLine();
+                    System.out.print("Set an initial balance: ");
+                    int initialBalance = in.nextInt();
+                    
+                    create_account user = new create_account(user_name, type, password, street, city, initialBalance);
+                    accounts.add(user);
+                    
+                    System.out.println("\n\t\t\t\t\t\t   \"Your Account Details\"");
+                    System.out.println("\t\t\t\t\t\t\"Don't Forget Account Number\"\n");
+                    System.out.println("\t\t\t\t\t********************************************");
+                    user.display_details();
+                    break;
+                }
+                case 2 : {
+                    if (accounts.isEmpty()) {
+                        System.out.println("\t\t\t\t\t\"NO ACCOUNTS CREATED YET. PLEASE CREATE AN ACCOUNT FIRST\"");
+                        break;
+                    }
+                    else {
+                        System.out.print("\nEnter Account Number: ");
+                        int accountNumberDeposit = in.nextInt();
+                        create_account depositAccount = findAccount(accounts, accountNumberDeposit);
+                        
+                        if (depositAccount == null) {
+                            System.out.println("\t\t\t\t\t\t\"ACCOUNT NOT FOUND\"");
+                            break;
+                        }
+                        else {
+                            System.out.print("Enter Password: ");
+                            String inputPassword = strng.nextLine();
+                            
+                            if (depositAccount.authenticate(inputPassword)) {
+                                System.out.print("Enter Amount Of Money: ");
+                                int depositAmount = in.nextInt();
+                                depositAccount.deposite(depositAmount);
+                                System.out.println("\t\t\t\t\t\t\"Deposit Successful!!\"");
+                            } 
+                            else {
+                                System.out.println("\t\t\t\t\t\t\"WRONG PASSWORD\"");
+                            }
+                        }
+                    }
+                    break;
+                }
+                case 3 : {
+                    if (accounts.isEmpty()) {
+                        System.out.println("\t\t\t\t\t\"NO ACCOUNTS CREATED YET. PLEASE CREATE AN ACCOUNT FIRST.\"");
+                        break;
+                    }
+                    else {
+                        System.out.print("\nEnter Account Number: ");
+                        int accountNumberWithdraw = in.nextInt();
+                        create_account withdrawAccount = findAccount(accounts, accountNumberWithdraw);
+                        
+                        if (withdrawAccount == null) {
+                            System.out.println("\t\t\t\t\t\t\"ACCOUNT NOT FOUND\"");
+                            break;
+                        }
+                        else {
+                            System.out.print("Enter Password: ");
+                            String inputPasswordWithdraw = strng.nextLine();
+                            
+                            if (withdrawAccount.authenticate(inputPasswordWithdraw)) {
+                                System.out.print("Enter Amount Of Money to Withdraw: ");
+                                int withdrawAmount = in.nextInt();
+                                int cb = withdrawAccount.withdraw(withdrawAmount);
+                                System.out.println("Withdraw Successful!!\nYour Current Balance: " + cb);
+                            } 
+                            else {
+                                System.out.println("\t\t\t\t\t\t\"WRONG PASSWORD\"");
+                            }
+                        }
+                    }
+                    break;
+                }
+                case 4 : {
+                    if (accounts.isEmpty()) {
+                        System.out.println("\t\t\t\t\t\"NO ACCOUNTS CREATED YET. PLEASE CREATE AN ACCOUNT FIRST\"");
+                        break;
+                    }
+                    else {
+                        System.out.print("\nEnter Account Number: ");
+                        int accountNumberCheck = in.nextInt();
+                        create_account checkAccount = findAccount(accounts, accountNumberCheck);
+                        
+                        if (checkAccount == null) {
+                            System.out.println("\t\t\t\t\t\t\"ACCOUNT NOT FOUND\"");
+                            break;
+                        }
+                        else {
+                            System.out.println("Your Current Balance: " + checkAccount.Acc_Balance);
+                        }
+                    }
+                    break;
+                }
+                case 5 : {
+                    if (accounts.isEmpty()) {
+                        System.out.println("\t\t\t\t\t\"NO ACCOUNTS CREATED YET. PLEASE CREATE AN ACCOUNT FIRST\"");
+                        break;
+                    }
+                    else {
+                        System.out.print("\nEnter Account Number: ");
+                        int accountNumberDisplay = in.nextInt();
+                        create_account displayAccount = findAccount(accounts, accountNumberDisplay);
+                        
+                        if (displayAccount == null) {
+                            System.out.println("\t\t\t\t\t\t\"ACCOUNT NOT FOUND\"");
+                            break;
+                        }
+                        else {
+                            displayAccount.display_details();
+                        }
+                    }
+                    break;
+                }
+                case 6 :{ 
+                    Exit = false;
+                    break;
+                }
+                default : { 
+                    System.out.println("\t\t\t\t\t\t\"WRONG CHOICE\"");
+                }
+            }
+            System.out.println("\n");
+        } while (Exit);
+        System.out.println("\t\t\t\t\t\t\"THANKS FOR COMING!\"");
+    }
+
+    // Helper function to find an account by account number
+    private static create_account findAccount(List<create_account> accounts, int accountNumber) {
+        for (create_account account : accounts) {
+            if (account.Acc_num == accountNumber) {
+                return account;
+            }
+        }
+        return null;
+    }
+    
+    public static void displayWelcomeMessage() {
+        System.out.println("\t\t\t\t\tWELCOME TO OUR BANK MANAGEMENT SYSTEM");
+        System.out.println("\t\t\t\t===================================================");
+        System.out.println("\t\t\t We are here to serve you! Remember: 'Saving today for a better tomorrow.'");
+        System.out.println("\t\t\t\t\tLet's get started with managing your accounts.");
+
+        try {
+            Thread.sleep(2000); // Sleep for 2 seconds / 2000 milliseconds to give a nice touch
+        } 
+        catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+}

@@ -1,36 +1,29 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-bool mycompare (pair<int, int> p1, pair <int, int> p2) {
-    return p1.first < p2.first;
-}
+#define    ll  long long
 
-bool cmp(pair<int, int> a, pair<int, int> b) {
-    if (a.first != b.first) {
-        return a.first < b.first;
-    }
-    else {
-        return a.second > b.second;
-    }
+bool compare(const pair<int, int>&i, const pair<int, int>&j)  {
+    return i.second < j.second;
 }
-
 int main () {
+    int n;
+    cin >> n;
 
-    int tc;
-    vector<pair<int, int>> v;
-    cin >> tc;
+    vector <pair<ll, ll>> v;
 
-    while (tc--) {
-        int x, y;
-        cin >> x >> y;
-        v.push_back(make_pair(x, y));
+    for (int i=0; i<n; i++) {
+        ll a, b;
+        cin >> a >> b;
+        v.push_back({a, b});
     }
+    
+    sort (v.begin(), v.end()); // first value accending order
+    sort (v.begin(), v.end(), compare); // second value accending order
+    
 
-    sort(v.begin(), v.end(), cmp); // ascending order for v[i].first and descending order for v[i].second
-    sort(v.begin(), v.end(), mycompare);// descending order for v[i].first and ascending order for v[i].second
-
-    for (int i=0; i<v.size(); i++) {
-        cout << v[i].first<<" "<<v[i].second<<endl;
+    for (auto it : v) {
+        cout << it.first << " " << it.second << endl;
     }
 
     return 0;

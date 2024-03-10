@@ -28,3 +28,44 @@ int main () {
 
     return 0;
 }
+
+******************************************Another Tricks**************************************************
+first one increasing order, if first value same then second one will be decreasing
+
+#include <bits/stdc++.h>
+using namespace std;
+
+#define ll long long
+
+bool compare(pair<ll, ll> a, pair<ll, ll> b) {
+    if (a.first == b.first) {
+        return a.second > b.second;
+    }
+    return a.first < b.first;
+}
+
+int main() {
+    int t;
+    scanf("%d", &t);
+
+    while (t--) {
+        ll n;
+        scanf("%lld", &n);
+
+        vector<pair<ll, ll>> v(n);
+
+        for (int i = 0; i < n; i++) {
+            scanf("%lld %lld", &v[i].first, &v[i].second);
+        }
+
+        sort(v.begin(), v.end(), compare);
+
+        for (int i = 0; i < n; i++) {
+            printf("%lld %lld\n", v[i].first, v[i].second);
+        }
+    }
+
+    return 0;
+}
+
+
